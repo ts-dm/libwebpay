@@ -11,16 +11,15 @@ package cl.transbank.webpay;
 
 import cl.transbank.webpay.Webpay.Environment;
 import cl.transbank.webpay.security.SoapSignature;
-import com.transbank.webpay.wswebpay.service.TransactionResultOutput;
-import com.transbank.webpay.wswebpay.service.WSWebpayService;
-import com.transbank.webpay.wswebpay.service.WSWebpayServiceImplService;
-import com.transbank.webpay.wswebpay.service.WsInitTransactionInput;
-import com.transbank.webpay.wswebpay.service.WsInitTransactionOutput;
-import com.transbank.webpay.wswebpay.service.WsTransactionDetail;
-import com.transbank.webpay.wswebpay.service.WsTransactionType;
+import com.transbank.webpay.wswebpay.service.*;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.List;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.ConnectionType;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 
 /**
 
@@ -50,6 +49,28 @@ public class WebpayNormal {
 
         WSWebpayServiceImplService ss = new WSWebpayServiceImplService(wsdl);        
         this.port = ss.getWSWebpayServiceImplPort();
+        if (signature != null){
+            signature.applySignature(port);
+        }       
+    }
+    
+    public WebpayNormal(String url, String commerceCode, SoapSignature signature,
+            long connectionTimeout, long readTimeout) throws Exception {
+        this.commerceCode = commerceCode;
+        
+        URL wsdl = new URL(url);
+
+        WSWebpayServiceImplService ss = new WSWebpayServiceImplService(wsdl);        
+        this.port = ss.getWSWebpayServiceImplPort();
+        
+        final Client client = ClientProxy.getClient(port);
+        final HTTPConduit httpConduit = (HTTPConduit) client.getConduit();
+        final HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
+        httpClientPolicy.setConnectionTimeout(connectionTimeout);
+        httpClientPolicy.setReceiveTimeout(readTimeout);
+        httpClientPolicy.setConnection(ConnectionType.CLOSE);
+        httpConduit.setClient(httpClientPolicy);
+        
         if (signature != null){
             signature.applySignature(port);
         }       
