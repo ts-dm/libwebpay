@@ -81,10 +81,7 @@ public class WebpayNormal {
     }
     
     public TransactionResultOutput getTransactionResult(String token){
-        TransactionResultOutput result = port.getTransactionResult(token);
-        //Se realiza siempre un acknowledge luego de obtener el resultado de la transaccion
-        //this.acknowledgeTransaction(token);        
-        return result;
+        return port.getTransactionResult(token);
     }
     
     public void acknowledgeTransaction(String token){

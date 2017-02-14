@@ -67,8 +67,9 @@ public class WebpayPayU {
     }
     
     public synchronized WebpayNormal getNormalTransaction() throws Exception {
-        if (normalTransaction == null){
-            normalTransaction = new WebpayNormal(url + NORMAL_MODE_FRAGMENT, commerceCode, signature);
+        if (normalTransaction == null) {
+            normalTransaction = new WebpayNormal(url + NORMAL_MODE_FRAGMENT, commerceCode,
+                    signature, connectionTimeout, readTimeout);
         }
         return normalTransaction;
     }

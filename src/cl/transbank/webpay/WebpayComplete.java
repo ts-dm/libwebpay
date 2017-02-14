@@ -78,7 +78,6 @@ public class WebpayComplete {
     public WsCompleteInitTransactionOutput initCompleteTransaction(WsCompleteInitTransactionInput input){
         return port.initCompleteTransaction(input);
     }
-            
     
     public WsCompleteInitTransactionOutput initCompleteTransaction(double amount, 
             String buyOrder, String sessionId,  String cardExpirationDate, 
